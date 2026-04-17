@@ -44,4 +44,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: cat-breed-debug
-        path: bin/catbreedidentifier-1.0-debug.apk
+        path: bin/catbreedidentifier-1.0.0-debug.apk
