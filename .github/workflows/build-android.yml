@@ -11,34 +11,54 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Set up Python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: '3.9'
 
     - name: Set up JDK
-      uses: actions/setup-java@v3
+      uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Install Android SDK
-      uses: android-actions/setup-android@v2
-      with:
-        api-levels: 31
-        ndk-version: '25.1.8937393'
-
-    - name: Install dependencies
+    - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cython python3-dev
+        sudo apt-get install -y \
+          build-essential \
+          libssl-dev \
+          libffi-dev \
+          python3-dev \
+          cython3 \
+          git \
+          wget \
+          unzip
+
+    - name: Install Android SDK/NDK
+      run: |
+        mkdir -p ~/android-sdk
+        cd ~/android-sdk
+        wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+        unzip -q commandlinetools-linux-11076708_latest.zip
+        yes | ./cmdline-tools/bin/sdkmanager --sdk_root=. "platforms;android-33" "build-tools;33.0.1" "ndk;25.1.8937393"
+
+    - name: Set Android SDK/NDK environment
+      run: |
+        echo "ANDROID_SDK_ROOT=$HOME/android-sdk" >> $GITHUB_ENV
+        echo "ANDROID_NDK_ROOT=$HOME/android-sdk/ndk/25.1.8937393" >> $GITHUB_ENV
+        echo "$HOME/android-sdk/platform-tools" >> $GITHUB_PATH
+
+    - name: Install Buildozer
+      run: |
+        pip install --upgrade pip
         pip install buildozer cython
 
     - name: Build APK with Buildozer
       run: |
-        buildozer android debug
+        buildozer -v android debug
 
     - name: Upload APK artifact
       uses: actions/upload-artifact@v4
