@@ -53,9 +53,12 @@ jobs:
         echo ""
         echo "Full bin directory contents:"
         ls -la bin/ 2>/dev/null || echo "bin/ directory not found"
-        echo ""
-        echo "Full directory structure:"
-        find . -maxdepth 3 -type d | head -20
+
+    - name: Upload APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cat-breed-debug
+        path: bin/*.apk
 
     - name: Upload build log on failure
       if: failure()
