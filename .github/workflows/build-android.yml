@@ -41,7 +41,7 @@ jobs:
         buildozer android debug
 
     - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: cat-breed-debug
         path: bin/catbreedidentifier-1.0.0-debug.apk
