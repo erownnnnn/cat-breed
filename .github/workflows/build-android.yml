@@ -46,12 +46,16 @@ jobs:
       run: |
         buildozer -v android debug 2>&1 | tee build.log
 
-    - name: Upload APK
-      if: success()
-      uses: actions/upload-artifact@v4
-      with:
-        name: cat-breed-debug
-        path: bin/*.apk
+    - name: Find APK files
+      run: |
+        echo "Searching for APK files..."
+        find . -name "*.apk" -type f
+        echo ""
+        echo "Full bin directory contents:"
+        ls -la bin/ 2>/dev/null || echo "bin/ directory not found"
+        echo ""
+        echo "Full directory structure:"
+        find . -maxdepth 3 -type d | head -20
 
     - name: Upload build log on failure
       if: failure()
